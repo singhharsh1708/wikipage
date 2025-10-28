@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiClone</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the dynamically injected content */
+        /* These styles mimic a Wikipedia article's typography */
+        #content-article h1 {
+            font-size: 2rem; /* 32px */
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+            padding-bottom: 0.5rem;
+        }
+        #content-article h2 {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            margin-top: 1.5rem;
+            border-bottom: 1px solid #e5e7eb; /* gray-200 */
+            padding-bottom: 0.25rem;
+        }
+        #content-article h3 {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+        #content-article p {
+            margin-bottom: 1rem;
+            line-height: 1.625; /* relaxed */
+        }
+        #content-article ul {
+            list-style-type: disc;
+            list-style-position: inside;
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+        }
+        #content-article li {
+            margin-bottom: 0.25rem;
+        }
+        #content-article a {
+            color: #2563eb; /* blue-600 */
+            text-decoration: underline;
+        }
+        #content-article a:hover {
+            color: #1d4ed8; /* blue-800 */
+        }
+        
+        /* Style for the active link in the sidebar */
+        #toc-list a.active {
+            font-weight: 700;
+            color: #1d4ed8; /* blue-800 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h1 class="text-3xl font-bold text-gray-900">WikiClone</h1>
+            <p class="text-gray-600">Your personal knowledge base</p>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row md:gap-8">
+
+            <!-- Sidebar (Table of Contents) -->
+            <nav class="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md h-fit md:sticky md:top-6 mb-6 md:mb-0">
+                <h2 class="text-xl font-semibold mb-3 border-b pb-2">Table of Contents</h2>
+                <ul id="toc-list" class="space-y-2">
+                    <!-- Links will be dynamically inserted here by JavaScript -->
+                    <li class="text-gray-500">Loading...</li>
+                </ul>
+            </nav>
+
+            <!-- Main Article Content -->
+            <main class="w-full md:w-3/4 bg-white p-6 md:p-8 rounded-lg shadow-md">
+                <article id="content-article">
+                    <!-- Article content will be dynamically inserted here -->
+                </article>
+            </main>
+
+        </div>
+    </div>
+
+    <script>
+        // --- CONTENT FILE ---
+        // To update your website's content, just edit this 'wikiContent' object.
+        // The "key" (e.g., "welcome") is used for the URL.
+        // The "title" is used in the Table of Contents.
+        // The "content" is the HTML that will be displayed for that article.
+        const wikiContent = {
+            "welcome": {
+                title: "Welcome to WikiClone",
+                content: `
+                    <h1>Welcome to your new Wiki!</h1>
+                    <p>This is a simple, single-file website that mimics the behavior of Wikipedia. You can navigate between articles using the links in the "Table of Contents" on the left.</p>
+                    <p>This entire site is driven by a single JavaScript object. To edit this page or add new ones, open this <code>index.html</code> file in a text editor and find the <code>wikiContent</code> object inside the <code>&lt;script&gt;</code> tag at the bottom.</p>
+                    <h2>How it Works</h2>
+                    <p>The website uses JavaScript to:</p>
+                    <ul>
+                        <li>Read the <code>wikiContent</code> object.</li>
+                        <li>Automatically create the "Table of Contents" from the object's keys.</li>
+                        <li>Listen for changes in the URL (the part after the '#').</li>
+                        <li>Display the correct article content based on the URL.</li>
+                    </ul>
+                    <p>Click on "JavaScript" or "CSS" in the sidebar to see other articles.</p>
+                `
+            },
+            "javascript": {
+                title: "JavaScript",
+                content: `
+                    <h1>JavaScript</h1>
+                    <p>JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS. As of 2023, 98.7% of websites use JavaScript on the client side for webpage behavior, often incorporating third-party libraries.</p>
+                    <p>All major web browsers have a dedicated JavaScript engine to execute the code on users' devices.</p>
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li><strong>Client-Side Scripting:</strong> Runs in the user's browser to create dynamic and interactive web pages.</li>
+                        <li><strong>Asynchronous:</strong> Can perform operations like fetching data from a server without blocking the main thread.</li>
+                        <li><strong>Versatile:</strong> Used for web development, mobile apps (with frameworks like React Native), server-side development (Node.js), and game development.</li>
+                    </ul>
+                    <h3>Example</h3>
+                    <p>This very website uses JavaScript to read the content object and display this article.</p>
+                `
+            },
+            "css": {
+                title: "CSS (Cascading Style Sheets)",
+                content: `
+                    <h1>CSS (Cascading Style Sheets)</h1>
+                    <p>Cascading Style Sheets (CSS) is a style sheet language used for describing the presentation of a document written in a markup language such as HTML or XML.</p>
+                    <p>CSS is a cornerstone technology of the World Wide Web, alongside HTML and JavaScript.</p>
+                    <h2>This Site's Styling</h2>
+                    <p>This website is styled using <strong>Tailwind CSS</strong>, a popular "utility-first" CSS framework. Instead of writing custom CSS files, we apply pre-existing classes directly in the HTML.</p>
+                    <p>For example, the class <code>bg-white p-6 rounded-lg shadow-md</code> is used to create the white "card" that this text is inside of.</p>
+                    <ul>
+                        <li><code>bg-white</code>: Sets the background color to white.</li>
+                        <li><code>p-6</code>: Adds padding around the content.</li>
+                        <li><code>rounded-lg</code>: Applies large rounded corners.</li>
+                        <li><code>shadow-md</code>: Adds a medium box shadow.</li>
+                    </ul>
+                `
+            },
+            "animal-husbandry": {
+    title: "Animal Husbandry",
+    content: `
+        <h1>Animal Husbandry</h1>
+        <p>
+            Animal husbandry is the branch of agriculture concerned with the care, breeding, and management 
+            of livestock such as cows, goats, sheep, poultry, and pigs. It plays a vital role in providing 
+            food, fiber, manure, and draught power.
+        </p>
+
+        <h2>Importance</h2>
+        <ul>
+            <li>Provides essential products like milk, meat, eggs, wool, and leather.</li>
+            <li>Contributes to rural employment and income generation.</li>
+            <li>Supports sustainable agriculture through manure used as fertilizer.</li>
+            <li>Helps maintain nutritional security, especially in developing countries.</li>
+        </ul>
+
+        <h2>Major Branches</h2>
+        <ul>
+            <li><strong>Dairy Farming:</strong> Focuses on milk production from animals like cows and buffaloes.</li>
+            <li><strong>Poultry Farming:</strong> Involves raising chickens, ducks, and turkeys for eggs and meat.</li>
+            <li><strong>Sheep and Goat Rearing:</strong> Provides wool, meat, and skin products.</li>
+            <li><strong>Fishery:</strong> Cultivation and harvesting of fish for commercial purposes.</li>
+            <li><strong>Piggery:</strong> Rearing pigs for pork and other products.</li>
+        </ul>
+
+        <h2>Modern Practices</h2>
+        <p>
+            Modern animal husbandry emphasizes scientific breeding, vaccination, and proper feed management. 
+            Technologies like artificial insemination, genetic improvement, and disease control have improved 
+            livestock productivity and health.
+        </p>
+
+        <h2>Conclusion</h2>
+        <p>
+            Animal husbandry is essential for agricultural sustainability, economic growth, and food security. 
+            Adopting scientific and ethical practices ensures healthier livestock and a stronger agricultural economy.
+        </p>
+    `
+},
+
+             "add_new_page": {
+                title: "How to Add a New Page",
+                content: `
+                    <h1>How to Add a New Page</h1>
+                    <p>Adding a new page is simple! You just need to add a new entry to the <code>wikiContent</code> object in the script.</p>
+                    <p>Follow this template:</p>
+<pre class="bg-gray-100 p-4 rounded-md overflow-x-auto">
+"your-new-key": {
+    title: "Your New Page Title",
+    content: \`
+        &lt;h1&gt;Your New Page Title&lt;/h1&gt;
+        &lt;p&gt;This is the content for your new page. You can use any HTML tags you want, like &lt;strong&gt;strong&lt;/strong&gt; or &lt;em&gt;italic&lt;/em&gt; text.&lt;/p&gt;
+        &lt;h2&gt;A new section&lt;/h2&gt;
+        &lt;ul&gt;
+            &lt;li&gt;List item 1&lt;/li&gt;
+            &lt;li&gt;List item 2&lt;/li&gt;
+        &lt;/ul&gt;
+    \`
+},
+</pre>
+                    <p><strong>Important:</strong></p>
+                    <ol class="list-decimal list-inside pl-4">
+                        <li>The <code>"your-new-key"</code> must be unique and will be used in the URL (e.g., <code>index.html#your-new-key</code>).</li>
+                        <li>Make sure to add a comma <code>,</code> after the closing <code>}</code> if you add another entry after it (unless it's the very last one).</li>
+                        <li>Use backticks <code>\`</code> to enclose your HTML content. This makes it easy to write multi-line strings.</li>
+                    </ol>
+                `
+            }
+        };
+        // --- END OF CONTENT FILE ---
+
+
+        // --- WEBSITE LOGIC ---
+        // (You don't need to edit anything below this line)
+
+        const tocList = document.getElementById('toc-list');
+        const contentArticle = document.getElementById('content-article');
+
+        /**
+         * Populates the Table of Contents sidebar
+         */
+        function populateSidebar() {
+            tocList.innerHTML = ''; // Clear the "Loading..." text
+            for (const key in wikiContent) {
+                const article = wikiContent[key];
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${key}`;
+                a.textContent = article.title;
+                a.dataset.key = key; // Store the key for easy lookup
+                a.className = "block px-2 py-1 rounded-md hover:bg-gray-100 transition-colors";
+                li.appendChild(a);
+                tocList.appendChild(li);
+            }
+        }
+
+        /**
+         * Loads the content for the current article based on the URL hash
+         */
+        function loadContent() {
+            // Get the article key from the URL hash (e.g., #javascript)
+            // Default to 'welcome' if no hash is present
+            const articleKey = window.location.hash.substring(1) || 'welcome';
+            
+            // Find the article in our content object
+            const article = wikiContent[articleKey];
+
+            // Remove 'active' class from all sidebar links
+            document.querySelectorAll('#toc-list a').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            if (article) {
+                // If article exists, display its content
+                contentArticle.innerHTML = article.content;
+                
+                // Add 'active' class to the matching sidebar link
+                const activeLink = document.querySelector(`#toc-list a[data-key="${articleKey}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            } else {
+                // If article doesn't exist, show a 404 message
+                contentArticle.innerHTML = `
+                    <h1>404 - Page Not Found</h1>
+                    <p>The article you were looking for (<code>${articleKey}</code>) does not exist.</p>
+                    <p>Return to the <a href="#welcome">Welcome Page</a>.</p>
+                `;
+            }
+        }
+
+        /**
+         * Filters the sidebar based on search input
+         */
+        function filterSidebar() {
+            const searchTerm = searchBar.value.toLowerCase();
+            const links = tocList.getElementsByTagName('li');
+            
+            let foundOne = false;
+            for (let i = 0; i < links.length; i++) {
+                const link = links[i];
+                const title = link.textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    link.style.display = '';
+                    foundOne = true;
+                } else {
+                    link.style.display = 'none';
+                }
+            }
+            
+            // Show a "no results" message if needed
+            let noResultsMsg = document.getElementById('no-results-msg');
+            if (!foundOne && !noResultsMsg) {
+                const li = document.createElement('li');
+                li.id = 'no-results-msg';
+                li.textContent = 'No results found.';
+                li.className = 'text-gray-500 px-2 py-1';
+                tocList.appendChild(li);
+            } else if (foundOne && noResultsMsg) {
+                tocList.removeChild(noResultsMsg);
+            }
+        }
+
+
+        // --- INITIALIZE THE APP ---
+
+        // 1. Populate the sidebar as soon as the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSidebar();
+            
+            // 2. Load the correct content based on the initial URL
+            loadContent();
+    
+            // 3. Add an event listener to load new content when the hash changes
+            window.addEventListener('hashchange', loadContent);
+        });
+
+    </script>
+</body>
+</html>
+
